@@ -1,0 +1,76 @@
+---
+title: "MERS"
+author: "Emma Troth"
+date: "May 16, 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+Figure 1.
+```{r Figure 1, message=FALSE, warning=FALSE, echo=FALSE}
+library(lubridate)
+library(ggplot2) 
+setwd("C:/Users/workshop/Desktop/mers")
+mers<-read.csv('cases.csv')
+
+mers$onset2<-ymd(mers$onset)
+mers$hospitalized2<-ymd(mers$hospitalized)
+class(mers$onset2)
+day0<-min(na.omit(mers$onset2))
+mers$epi.day<-as.numeric(mers$onset2-day0)
+
+
+ggplot(data=mers) +
+geom_bar(mapping=aes(x=epi.day)) +
+  labs(x='Epidmeic day', y='Case count', title='Global count of MERS cases by date of MERS cases by date of symptom onset', caption="Data from: https://github.com/rambaut/MERS-Cases/blob/gh-pages/data/cases.csv")
+```
+
+
+
+Figure 2.
+```{r Figure 2, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(data=mers) +
+  geom_bar(mapping=aes(x=epi.day, fill=country)) +
+  labs(x='Epidemic day', y='Case count', title='Global count of MERS cases by date of symptom onset', caption="Data from: https://github.com/rambaut/MERS-Cases/blob/gh-pages/data/cases.csv")
+```
+
+Figure 3.
+```{r Figure 3, message=FALSE, warning=FALSE, echo=FALSE}
+mers$infectious.period <- mers$hospitalized2-mers$onset2
+class(mers$infectious.period)
+mers$infectious.period<-as.numeric(mers$infectious.period, units="days")
+ggplot(data=mers) +
+  geom_histogram(aes(x=infectious.period)) +
+  labs(x='Infectious period', y='Frequency', title='Distribution of calculated MERS infectious period', caption="Data from: https://github.com/rambuat/MERS-Cases/blobl/gh-pages/data/cases.csv")
+```
+
+Figure 4.
+```{r Figure 4, message=FALSE, warning=FALSE, echo=FALSE}
+mers$infectious.period2<-ifelse(mers$infectious.period<0,0,mers$infectious.period)
+ggplot(data=mers) +
+  geom_histogram(aes(x=infectious.period2)) +
+  labs(x='Infecitus period', y='Frequency', title='Distribution of calculated MERS infectious period (positive values only)', captions='Data from https://github.com/rambaut/MERS-Cases/blob/gh-pages/data/cases.csv')
+```
+
+Figure 5.
+```{r Figure 5, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(data=mers) +
+  geom_area(stat='bin', mapping=aes(x=infectious.period2))+
+  labs(x='Infectious period', y='Frequency', title='Area plot for MERS infectious period (positive values only)', caption='Data from: https://github.com/rambaut/MERS-Cases/blob/gh-pages/data/case.csv')
+```
+
+Figure 6
+```{r Figure 6, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(data=mers) +
+  geom_bar(aes(x=epi.day)) +
+  labs(x='Epidemic Day', y='Infectious Period', title='Infectious Period over course of MERS epidemic', caption='Data from: https://github.com/rambaut/MERS-Cases/blob/gh-pages/data/case.csv')
+```
+
+Figure 7
+```{r Figure 7, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(data=mers, mapping=aes(x=epi.day, y=infectious.period2)) +
+  geom_point(mapping=aes(color=country)) +
+  facet_wrap(~ country) +
+  scale_y_continuous(limits = c(0,50)) +
+  labs(x="Epidemic Day", y="Infectious period", title="MERS infectious period (positive values only)over time", caption="Data from: https://github.com/rambaut/MERS-Cases/blob/gh-pages/data/case.csv")
+```
